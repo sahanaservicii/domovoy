@@ -1,49 +1,87 @@
-# Domovoy Agent (public): skills & agents
+# Domovoy — OpenCode Agents & Skills
 
-Публичный экспорт конфигурации агента **Домовой** (OpenCode) для синхронизации и восстановления на других устройствах.
+Публичный репозиторий конфигурации **Домового**: набор агентов и навыков для [OpenCode](https://opencode.ai), ориентированный на офлайн-администрирование домашней инфраструктуры (LAN, роутер, устройства, документация) с упором на безопасность и воспроизводимость.
 
-## Что включено
-- `.config/opencode/agents/*.md` — определения агентов (в т.ч. `domovoy`, `network`, `home`, `android`, `security`, `backup`, `docs`).
-- `.config/opencode/skills/**` — навыки (SKILL.md и связанные скрипты навыков).
+> Репозиторий содержит **только** определения агентов и навыков. Секреты, инвентарь, бэкапы, состояние и любые приватные данные сюда **не попадают** и не должны коммититься.
 
-## Что НЕ включено (и не должно попадать в репозиторий)
-- Секреты и учётные данные: `~/.config/opencode/secrets/*`, `*.env`, ключи/токены/пароли, `service.json`.
-- Локальное состояние и приватные данные инфраструктуры: `homelab.json`, `INVENTORY.md`, `state/`, `backups/`, `reports/`, логи, базы, конфиги WireGuard с ключами и т.п.
-- Любые IP/MAC/топология/бэкапы устройств, если вы считаете их конфиденциальными.
+## Состав репозитория
 
-Перед коммитом всегда проверяйте дифф и выполняйте поиск по токенам/паролям.
+| Путь | Назначение |
+|---|---|
+| `.config/opencode/agents/*.md` | Профили агентов: `domovoy` (primary), `network`, `home`, `android`, `security`, `backup`, `docs` |
+| `.config/opencode/skills/**` | Навыки (`SKILL.md`, при необходимости вспомогательные скрипты) |
+| `README.md` | Описание, установка, синхронизация |
+| `LICENSE` | Лицензия (MIT) |
+| `SECURITY.md` | Политика безопасности и работа с секретами |
+| `CONTRIBUTING.md` | Правила изменений и вклада |
+| `.gitignore` | Защита от случайного коммита секретов/состояния |
+
+## Возможности (кратко)
+
+- **Домовой (`domovoy`)** — оркестратор: сбор фактов, планирование, делегирование профильным подагентам, проверки после изменений.
+- **Подагенты:** `network` (OpenWrt/сеть), `home` (Home Assistant), `android` (ADB/устройства), `security` (аудит LAN), `backup` (бэкапы/восстановление), `docs` (инвентарь/runbook/отчёты).
+- **Навыки:** `homelab`, `openwrt-admin`, `home-assistant-local`, `android-local`, `android-device`, `ip-cameras`, `sysadmin`, `mikrotik-switch-engineer`, `pdf-reader`, `screenshot-reader`, `self-improve` и др.
+
+> Промпты агентов/навыков могут содержать параметры примера для домашней среды (например, подсеть `192.168.1.0/24`). Перед использованием адаптируйте их под свою инфраструктуру и модель угроз.
+
+## Требования
+
+- Установленный [OpenCode](https://opencode.ai) и доступ к его конфигурации (`~/.config/opencode/`).
+- Для профильных задач — соответствующие локальные инструменты/доступы (SSH, ADB, API устройств и т.п.), настраиваемые **локально** вне этого репозитория.
+- Git — для синхронизации и обновлений.
 
 ## Установка / восстановление
-1. Склонируйте репозиторий на целевое устройство:
-   ```bash
-   git clone <URL_ВАШЕГО_РЕПО> domovoy-agent-public
-   cd domovoy-agent-public
-   ```
-2. Скопируйте (или синхронизируйте) агентов и навыки в конфиг OpenCode:
-   ```bash
-   mkdir -p ~/.config/opencode
-   cp -a .config/opencode/agents ~/.config/opencode/
-   cp -a .config/opencode/skills ~/.config/opencode/
-   ```
-   (При обновлении можно использовать `rsync -a --delete` для соответствующих каталогов — осознанно, т.к. удалит локальные файлы в этих папках, которых нет в репо.)
-3. При необходимости настройте основной конфиг OpenCode (`~/.config/opencode/opencode.json`, `default_agent`, плагины/MCP) отдельно — он не публикуется здесь, т.к. может быть средо-зависимым.
-4. Создайте локально секреты/инвентарь (не коммитить):
-   - `~/.config/opencode/secrets/homelab.env` (токены, пути к ключам и т.п.)
-   - рабочие файлы homelab (`homelab.json`, состояние, бэкапы) — по вашей локальной схеме.
 
-## Публикация/синхронизация (с машины с интернетом)
 ```bash
-cd /root/workspace/domovoy-agent-export   # или путь к этой папке
-git init                                  # если ещё не инициализировано
-git add .
-git commit -m "Update domovoy skills and agents"
-git branch -M main
-git remote add origin <URL_ВАШЕГО_РЕПО>   # один раз
-git push -u origin main
+git clone https://github.com/sahanaservicii/Domovoy-.git
+cd Domovoy-
+
+mkdir -p ~/.config/opencode
+cp -a .config/opencode/agents ~/.config/opencode/
+cp -a .config/opencode/skills ~/.config/opencode/
 ```
-Для обновлений после изменений: повторить `git add/commit/push` (только после проверки на отсутствие секретов).
+
+Обновление существующей установки (осознанно перезапишет файлы агентов/навыков в целевых каталогах):
+
+```bash
+git pull
+rsync -a --delete .config/opencode/agents/ ~/.config/opencode/agents/
+rsync -a --delete .config/opencode/skills/ ~/.config/opencode/skills/
+```
+
+### Что настроить локально (не в git)
+
+- `~/.config/opencode/opencode.json` — при необходимости: `default_agent`, плагины, MCP и прочие средо-зависимые параметры.
+- `~/.config/opencode/secrets/*` (например, `homelab.env`) — токены, пути к ключам и другие секреты.
+- Рабочие данные homelab (вне репозитория): `homelab.json`, `INVENTORY.md`, `state/`, `backups/`, `reports/` и т.д.
+
+## Синхронизация изменений (workflow)
+
+```bash
+# проверка на секреты/приватные данные перед коммитом
+git diff
+git status
+
+git add -A
+git commit -m "feat: краткое описание изменения"
+git push origin main
+```
+
+Рекомендации:
+- Ветка по умолчанию: `main`.
+- Осмысленные сообщения коммитов (например, Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`).
+- Не коммитьте секреты, дампы конфигов устройств, бэкапы и персональные данные — см. [SECURITY.md](SECURITY.md).
 
 ## Безопасность
-- Не добавляйте `secrets/`, `.env`, `homelab.json`, бэкапы и дампы конфигов устройств.
-- Храните приватные ключи/токены вне git (локально или в менеджере секретов).
-- Репозиторий содержит промпты/инструкции агентов — убедитесь, что в них нет чувствительных данных вашей среды.
+
+- Никогда не публикуйте токены, пароли, приватные ключи, `.env`, `service.json`, бэкапы и инвентарь с чувствительными данными.
+- Перед push выполняйте проверку диффа и поиск по признакам секретов.
+- Подробности: [SECURITY.md](SECURITY.md).
+
+## Вклад
+
+Предложения и улучшения приветствуются: исправления промптов, новые навыки, документация. См. [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Лицензия
+
+[MIT](LICENSE)
