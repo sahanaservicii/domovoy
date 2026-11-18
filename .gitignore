@@ -1,0 +1,41 @@
+# Secrets and credentials (NEVER commit)
+**/secrets/**
+*.env
+*.env.*
+!.env.example
+!*.env.example
+service.json
+*.key
+*.pem
+*.p12
+*.crt
+id_rsa*
+id_ed25519*
+*.token
+*token*.txt
+*password*
+keystore.properties
+wg*.conf
+
+# Local state / backups / reports / inventories (may contain private topology/IPs)
+state/
+backups/
+reports/
+*.log
+*.sqlite
+*.db
+homelab.json
+INVENTORY.md
+CHANGELOG.md
+self_improve/state.json
+
+# Build/runtime artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.apk
+*.zip
+dist/
+build/
+node_modules/
+.DS_Store
