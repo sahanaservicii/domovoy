@@ -20,7 +20,7 @@
 
 - **Домовой (`domovoy`)** — оркестратор: сбор фактов, планирование, делегирование профильным подагентам, проверки после изменений.
 - **Подагенты:** `network` (OpenWrt/сеть), `home` (Home Assistant), `android` (ADB/устройства), `security` (аудит LAN), `backup` (бэкапы/восстановление), `docs` (инвентарь/runbook/отчёты).
-- **Навыки:** `homelab`, `openwrt-admin`, `home-assistant-local`, `android-local`, `android-device`, `ip-cameras`, `sysadmin`, `mikrotik-switch-engineer`, `pdf-reader`, `screenshot-reader`, `self-improve` и др.
+- **Навыки:** `homelab`, `openwrt-admin`, `home-assistant-local`, `android-local`, `android-device`, `ip-cameras`, `sysadmin`, `mikrotik-switch-engineer`, `pdf-reader`, `screenshot-reader`, `self-improve`, `android-apk-build`, `vpn-bypass`, `windows-exe-build`, `xray-openwrt` и др.
 
 > Промпты агентов/навыков могут содержать параметры примера для домашней среды (например, подсеть `192.168.1.0/24`). Перед использованием адаптируйте их под свою инфраструктуру и модель угроз.
 
